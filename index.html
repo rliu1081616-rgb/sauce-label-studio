@@ -1,0 +1,1488 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>灵魂酱料标签工坊 | Soul Sauce Label Studio</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-color: #FAFBFC;
+            --panel-bg: #FFFFFF;
+            --border-color: #E5E7EB;
+            --text-primary: #1F2937;
+            --text-secondary: #6B7280;
+            --brand-blue: #0052CC;
+            --theme-red: #E53935;
+            --theme-orange: #FF8F00;
+            --theme-green: #43A047;
+            --theme-brown: #6D4C41;
+            --theme-blue: #1E88E5;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang SC", "Microsoft YaHei", sans-serif;
+            background: var(--bg-color);
+            color: var(--text-primary);
+            min-height: 100vh;
+        }
+
+        /* 顶部导航 */
+        .navbar {
+            background: var(--panel-bg);
+            border-bottom: 1px solid var(--border-color);
+            padding: 16px 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, var(--theme-red), var(--theme-orange));
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 24px;
+        }
+
+        .nav-links a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 14px;
+            transition: color 0.2s;
+        }
+
+        .nav-links a:hover {
+            color: var(--brand-blue);
+        }
+
+        /* 主内容区 */
+        .main-container {
+            display: flex;
+            gap: 24px;
+            padding: 24px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        /* 左侧编辑面板 */
+        .edit-panel {
+            width: 380px;
+            flex-shrink: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            max-height: calc(100vh - 140px);
+            overflow-y: auto;
+        }
+
+        .panel-section {
+            background: var(--panel-bg);
+            border-radius: 16px;
+            padding: 20px;
+            border: 1px solid var(--border-color);
+        }
+
+        .section-title {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 16px;
+            color: var(--text-primary);
+        }
+
+        .section-title .icon {
+            font-size: 18px;
+        }
+
+        /* 图片上传 */
+        .upload-area {
+            border: 2px dashed var(--border-color);
+            border-radius: 12px;
+            padding: 32px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            background: #FAFBFC;
+        }
+
+        .upload-area:hover {
+            border-color: var(--brand-blue);
+            background: #F0F7FF;
+        }
+
+        .upload-area.has-image {
+            padding: 12px;
+        }
+
+        .upload-area img {
+            max-width: 100%;
+            max-height: 200px;
+            border-radius: 8px;
+        }
+
+        .upload-icon {
+            font-size: 48px;
+            margin-bottom: 12px;
+        }
+
+        .upload-text {
+            color: var(--text-secondary);
+            font-size: 14px;
+        }
+
+        .upload-hint {
+            color: var(--text-secondary);
+            font-size: 12px;
+            margin-top: 8px;
+        }
+
+        /* 输入框 */
+        .input-group {
+            margin-bottom: 16px;
+        }
+
+        .input-group:last-child {
+            margin-bottom: 0;
+        }
+
+        .input-label {
+            display: block;
+            font-size: 14px;
+            font-weight: 500;
+            margin-bottom: 8px;
+            color: var(--text-primary);
+        }
+
+        .input-hint {
+            font-size: 12px;
+            color: var(--text-secondary);
+            margin-top: 6px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        input[type="text"],
+        textarea {
+            width: 100%;
+            padding: 12px 14px;
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            font-size: 14px;
+            font-family: inherit;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        input[type="text"]:focus,
+        textarea:focus {
+            outline: none;
+            border-color: var(--brand-blue);
+            box-shadow: 0 0 0 3px rgba(0, 82, 204, 0.1);
+        }
+
+        textarea {
+            resize: none;
+            height: 80px;
+        }
+
+        /* 酱料选择 */
+        .sauce-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+        }
+
+        .sauce-item {
+            border: 2px solid var(--border-color);
+            border-radius: 12px;
+            padding: 12px 8px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            background: var(--panel-bg);
+        }
+
+        .sauce-item:hover {
+            border-color: var(--theme-red);
+            transform: translateY(-2px);
+        }
+
+        .sauce-item.selected {
+            border-color: var(--theme-red);
+            background: #FFF5F5;
+        }
+
+        .sauce-icon {
+            font-size: 32px;
+            margin-bottom: 8px;
+        }
+
+        .sauce-name {
+            font-size: 12px;
+            font-weight: 500;
+            color: var(--text-primary);
+            line-height: 1.3;
+        }
+
+        .sauce-item.selected .sauce-name {
+            color: var(--theme-red);
+        }
+
+        /* 滑块 */
+        .slider-group {
+            margin-bottom: 20px;
+        }
+
+        .slider-group:last-child {
+            margin-bottom: 0;
+        }
+
+        .slider-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .slider-label {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .slider-value {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--theme-red);
+            font-family: "DIN Alternate", "Roboto Mono", monospace;
+        }
+
+        input[type="range"] {
+            width: 100%;
+            height: 8px;
+            border-radius: 4px;
+            background: #E5E7EB;
+            appearance: none;
+            cursor: pointer;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: var(--theme-red);
+            cursor: pointer;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+        }
+
+        /* 标签选择 */
+        .tag-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .tag-item {
+            padding: 8px 14px;
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.2s;
+            background: var(--panel-bg);
+        }
+
+        .tag-item:hover {
+            border-color: var(--theme-red);
+        }
+
+        .tag-item.selected {
+            background: var(--theme-red);
+            color: white;
+            border-color: var(--theme-red);
+        }
+
+        /* 颜色选择 */
+        .color-grid {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .color-item {
+            width: 44px;
+            height: 44px;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: transform 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 3px solid transparent;
+        }
+
+        .color-item:hover {
+            transform: scale(1.1);
+        }
+
+        .color-item.selected {
+            border-color: var(--text-primary);
+        }
+
+        .color-item.selected::after {
+            content: "✓";
+            color: white;
+            font-size: 18px;
+            font-weight: bold;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.3);
+        }
+
+        /* 模板选择 */
+        .template-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+        }
+
+        .template-item {
+            border: 2px solid var(--border-color);
+            border-radius: 12px;
+            padding: 16px 12px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .template-item:hover {
+            border-color: var(--brand-blue);
+        }
+
+        .template-item.selected {
+            border-color: var(--brand-blue);
+            background: #F0F7FF;
+        }
+
+        .template-icon {
+            font-size: 28px;
+            margin-bottom: 8px;
+        }
+
+        .template-name {
+            font-size: 13px;
+            font-weight: 500;
+        }
+
+        /* 右侧预览区 */
+        .preview-panel {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .preview-container {
+            background: var(--panel-bg);
+            border-radius: 16px;
+            padding: 32px;
+            border: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 600px;
+            width: 100%;
+        }
+
+        /* 卡片预览 */
+        .card-preview {
+            background: white;
+            border-radius: 24px;
+            overflow: hidden;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.15);
+            width: 360px;
+            transition: transform 0.3s;
+        }
+
+        .card-preview:hover {
+            transform: scale(1.02);
+        }
+
+        .card-image-container {
+            width: 100%;
+            height: 280px;
+            background: linear-gradient(135deg, #f5f5f5, #e0e0e0);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .card-image-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .card-image-placeholder {
+            color: #9CA3AF;
+            text-align: center;
+        }
+
+        .card-image-placeholder .icon {
+            font-size: 64px;
+            margin-bottom: 12px;
+        }
+
+        .card-content {
+            padding: 24px;
+        }
+
+        .card-header {
+            margin-bottom: 16px;
+        }
+
+        .card-main-title {
+            font-size: 16px;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .card-dish-name {
+            font-size: 26px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 10px;
+        }
+
+        .card-description {
+            font-size: 14px;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        /* 数值卡片 */
+        .stats-container {
+            display: flex;
+            gap: 12px;
+            margin: 20px 0;
+        }
+
+        .stat-card {
+            flex: 1;
+            background: #FFF5F5;
+            border-radius: 12px;
+            padding: 14px 10px;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--theme-red);
+            font-family: "DIN Alternate", "Roboto Mono", monospace;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: var(--text-secondary);
+            margin-top: 4px;
+        }
+
+        /* 标签展示 */
+        .card-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin: 16px 0;
+        }
+
+        .card-tag {
+            font-size: 13px;
+            color: var(--theme-red);
+        }
+
+        /* 酱料展示 */
+        .sauce-display {
+            background: #F9FAFB;
+            border-radius: 12px;
+            padding: 14px 16px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-top: 16px;
+        }
+
+        .sauce-display-icon {
+            font-size: 36px;
+        }
+
+        .sauce-display-info {
+            flex: 1;
+        }
+
+        .sauce-display-name {
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .sauce-display-label {
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        /* 卡片底部水印 */
+        .card-footer {
+            padding: 16px 24px;
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        /* 游戏风模板 */
+        .card-preview.game-style {
+            background: #1A1A2E;
+            border: 4px solid #FFD700;
+            border-radius: 8px;
+        }
+
+        .card-preview.game-style .card-content {
+            background: #1A1A2E;
+            color: #FFFFFF;
+        }
+
+        .card-preview.game-style .card-main-title {
+            color: #FFD700;
+            text-align: center;
+            font-size: 18px;
+            font-weight: bold;
+            border-bottom: 2px solid #FFD700;
+            padding-bottom: 10px;
+        }
+
+        .card-preview.game-style .card-dish-name {
+            color: #FFFFFF;
+            text-align: center;
+        }
+
+        .card-preview.game-style .card-description {
+            color: #CCCCCC;
+            text-align: center;
+        }
+
+        .card-preview.game-style .stat-card {
+            background: #2D2D44;
+            border: 2px solid #FFD700;
+            border-radius: 4px;
+        }
+
+        .card-preview.game-style .stat-value {
+            color: #FFD700;
+        }
+
+        .card-preview.game-style .stat-label {
+            color: #AAAAAA;
+        }
+
+        .card-preview.game-style .card-tag {
+            color: #FFD700;
+        }
+
+        .card-preview.game-style .sauce-display {
+            background: #2D2D44;
+            border: 2px solid #FFD700;
+        }
+
+        .card-preview.game-style .sauce-display-name {
+            color: #FFFFFF;
+        }
+
+        .card-preview.game-style .sauce-display-label {
+            color: #AAAAAA;
+        }
+
+        .card-preview.game-style .card-footer {
+            background: #1A1A2E;
+            border-top: 2px solid #FFD700;
+            color: #FFD700;
+        }
+
+        /* 简约风模板 */
+        .card-preview.minimal-style {
+            background: #FFFFFF;
+            border-radius: 0;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+        }
+
+        .card-preview.minimal-style .card-content {
+            text-align: center;
+            padding: 32px;
+        }
+
+        .card-preview.minimal-style .card-main-title {
+            display: none;
+        }
+
+        .card-preview.minimal-style .card-dish-name {
+            font-size: 22px;
+            font-weight: 400;
+            letter-spacing: 2px;
+        }
+
+        .card-preview.minimal-style .card-dish-name::after {
+            content: "";
+            display: block;
+            width: 40px;
+            height: 2px;
+            background: var(--text-primary);
+            margin: 16px auto;
+        }
+
+        .card-preview.minimal-style .stats-container {
+            justify-content: center;
+            gap: 24px;
+        }
+
+        .card-preview.minimal-style .stat-card {
+            background: transparent;
+            padding: 0;
+        }
+
+        .card-preview.minimal-style .stat-value {
+            font-size: 18px;
+            color: var(--text-primary);
+        }
+
+        .card-preview.minimal-style .card-tags {
+            justify-content: center;
+        }
+
+        .card-preview.minimal-style .card-tag {
+            color: var(--text-secondary);
+        }
+
+        .card-preview.minimal-style .sauce-display {
+            background: transparent;
+            border-top: 1px solid var(--border-color);
+            border-radius: 0;
+            justify-content: center;
+            margin-top: 24px;
+            padding-top: 24px;
+        }
+
+        /* 画布控制 */
+        .canvas-controls {
+            background: var(--panel-bg);
+            border-radius: 12px;
+            padding: 16px 20px;
+            border: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            width: 100%;
+        }
+
+        .control-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .control-label {
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+
+        .control-btn {
+            padding: 8px 16px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            background: var(--panel-bg);
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .control-btn:hover {
+            border-color: var(--brand-blue);
+            color: var(--brand-blue);
+        }
+
+        /* 底部下载栏 */
+        .download-bar {
+            background: var(--panel-bg);
+            border-top: 1px solid var(--border-color);
+            padding: 20px 24px;
+            position: sticky;
+            bottom: 0;
+        }
+
+        .download-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 24px;
+        }
+
+        .size-options {
+            display: flex;
+            gap: 12px;
+        }
+
+        .size-option {
+            padding: 10px 18px;
+            border: 2px solid var(--border-color);
+            border-radius: 10px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.2s;
+            background: var(--panel-bg);
+        }
+
+        .size-option:hover {
+            border-color: var(--brand-blue);
+        }
+
+        .size-option.selected {
+            border-color: var(--brand-blue);
+            background: #F0F7FF;
+            color: var(--brand-blue);
+            font-weight: 500;
+        }
+
+        .download-buttons {
+            display: flex;
+            gap: 12px;
+        }
+
+        .btn-download {
+            padding: 12px 28px;
+            border: none;
+            border-radius: 10px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-download.primary {
+            background: var(--brand-blue);
+            color: white;
+        }
+
+        .btn-download.primary:hover {
+            background: #0041A3;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 82, 204, 0.3);
+        }
+
+        .btn-download.secondary {
+            background: var(--panel-bg);
+            color: var(--text-primary);
+            border: 1px solid var(--border-color);
+        }
+
+        .btn-download.secondary:hover {
+            border-color: var(--brand-blue);
+            color: var(--brand-blue);
+        }
+
+        /* 品牌区域 */
+        .brand-footer {
+            padding: 24px;
+            text-align: center;
+            border-top: 1px solid var(--border-color);
+            background: var(--panel-bg);
+        }
+
+        .brand-logos {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 32px;
+            margin-bottom: 12px;
+        }
+
+        .brand-logo {
+            font-size: 14px;
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+
+        .brand-copyright {
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        /* 响应式 */
+        @media (max-width: 1200px) {
+            .main-container {
+                flex-direction: column;
+            }
+
+            .edit-panel {
+                width: 100%;
+                max-height: none;
+                flex-direction: row;
+                flex-wrap: wrap;
+            }
+
+            .panel-section {
+                flex: 1;
+                min-width: 300px;
+            }
+
+            .preview-panel {
+                order: -1;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .navbar {
+                flex-direction: column;
+                gap: 12px;
+            }
+
+            .nav-links {
+                gap: 16px;
+            }
+
+            .main-container {
+                padding: 16px;
+            }
+
+            .edit-panel {
+                flex-direction: column;
+            }
+
+            .panel-section {
+                min-width: 100%;
+            }
+
+            .sauce-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .download-content {
+                flex-direction: column;
+            }
+
+            .size-options {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+
+            .card-preview {
+                width: 100%;
+                max-width: 360px;
+            }
+        }
+
+        /* 隐藏的文件输入 */
+        .hidden-input {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <!-- 顶部导航 -->
+    <nav class="navbar">
+        <div class="logo">
+            <div class="logo-icon">🍶</div>
+            <span>灵魂酱料标签工坊</span>
+        </div>
+        <div class="nav-links">
+            <a href="#" onclick="showTutorial()">使用教程</a>
+            <a href="#" onclick="scrollToTemplates()">模板选择</a>
+            <a href="#" onclick="showAbout()">关于我们</a>
+        </div>
+    </nav>
+
+    <!-- 主内容区 -->
+    <div class="main-container">
+        <!-- 左侧编辑面板 -->
+        <div class="edit-panel">
+            <!-- 图片上传 -->
+            <div class="panel-section">
+                <div class="section-title">
+                    <span class="icon">📷</span>
+                    <span>上传食物图片</span>
+                </div>
+                <div class="upload-area" id="uploadArea" onclick="document.getElementById('imageInput').click()">
+                    <div class="upload-icon">📸</div>
+                    <div class="upload-text">点击或拖拽上传图片</div>
+                    <div class="upload-hint">支持 JPG/PNG/WEBP，建议尺寸 1080×1080</div>
+                </div>
+                <input type="file" id="imageInput" class="hidden-input" accept="image/*" onchange="handleImageUpload(event)">
+            </div>
+
+            <!-- 基础信息 -->
+            <div class="panel-section">
+                <div class="section-title">
+                    <span class="icon">✏️</span>
+                    <span>基础信息</span>
+                </div>
+                <div class="input-group">
+                    <label class="input-label">主标题</label>
+                    <input type="text" id="mainTitle" placeholder="我的灵魂酱料搭配" maxlength="20" oninput="updatePreview()">
+                    <div class="input-hint">💡 会显示在卡片顶部</div>
+                </div>
+                <div class="input-group">
+                    <label class="input-label">菜品名称</label>
+                    <input type="text" id="dishName" placeholder="麻辣鲜香拌饭" maxlength="15" oninput="updatePreview()">
+                    <div class="input-hint">💡 你做的/点的这道菜叫什么</div>
+                </div>
+                <div class="input-group">
+                    <label class="input-label">风味描述</label>
+                    <textarea id="description" placeholder="一勺辣鲜露，拯救寡淡人生 ✨" maxlength="50" oninput="updatePreview()"></textarea>
+                    <div class="input-hint">💡 一句话描述这道菜的灵魂所在</div>
+                </div>
+            </div>
+
+            <!-- 酱料选择 -->
+            <div class="panel-section">
+                <div class="section-title">
+                    <span class="icon">🍶</span>
+                    <span>选择灵魂酱料</span>
+                </div>
+                <div class="sauce-grid" id="sauceGrid">
+                    <div class="sauce-item" data-sauce="辣鲜露" data-color="#E53935" onclick="selectSauce(this)">
+                        <div class="sauce-icon">🌶️</div>
+                        <div class="sauce-name">家乐辣鲜露</div>
+                    </div>
+                    <div class="sauce-item" data-sauce="牛油麻辣酱" data-color="#D84315" onclick="selectSauce(this)">
+                        <div class="sauce-icon">🔥</div>
+                        <div class="sauce-name">牛油麻辣酱</div>
+                    </div>
+                    <div class="sauce-item" data-sauce="鸡汁" data-color="#FF8F00" onclick="selectSauce(this)">
+                        <div class="sauce-icon">🐔</div>
+                        <div class="sauce-name">家乐鸡汁</div>
+                    </div>
+                    <div class="sauce-item" data-sauce="沙拉酱" data-color="#43A047" onclick="selectSauce(this)">
+                        <div class="sauce-icon">🥗</div>
+                        <div class="sauce-name">好乐门沙拉酱</div>
+                    </div>
+                    <div class="sauce-item" data-sauce="蛋黄酱" data-color="#FFC107" onclick="selectSauce(this)">
+                        <div class="sauce-icon">🥚</div>
+                        <div class="sauce-name">好乐门蛋黄酱</div>
+                    </div>
+                    <div class="sauce-item" data-sauce="头抽鲜" data-color="#5D4037" onclick="selectSauce(this)">
+                        <div class="sauce-icon">🫗</div>
+                        <div class="sauce-name">家乐头抽鲜</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 风味数值 -->
+            <div class="panel-section">
+                <div class="section-title">
+                    <span class="icon">📊</span>
+                    <span>风味数值</span>
+                </div>
+                <div class="slider-group">
+                    <div class="slider-header">
+                        <span class="slider-label">🍚 下饭值</span>
+                        <span class="slider-value" id="stat1Value">7</span>
+                    </div>
+                    <input type="range" id="stat1" min="0" max="10" value="7" oninput="updateSlider('stat1')">
+                </div>
+                <div class="slider-group">
+                    <div class="slider-header">
+                        <span class="slider-label">🌶️ 鲜辣值</span>
+                        <span class="slider-value" id="stat2Value">5</span>
+                    </div>
+                    <input type="range" id="stat2" min="0" max="10" value="5" oninput="updateSlider('stat2')">
+                </div>
+                <div class="slider-group">
+                    <div class="slider-header">
+                        <span class="slider-label">😋 快乐值</span>
+                        <span class="slider-value" id="stat3Value">6</span>
+                    </div>
+                    <input type="range" id="stat3" min="0" max="10" value="6" oninput="updateSlider('stat3')">
+                </div>
+            </div>
+
+            <!-- 场景标签 -->
+            <div class="panel-section">
+                <div class="section-title">
+                    <span class="icon">🏷️</span>
+                    <span>场景标签</span>
+                </div>
+                <div class="tag-container" id="tagContainer">
+                    <div class="tag-item" onclick="toggleTag(this)">打工人午餐</div>
+                    <div class="tag-item" onclick="toggleTag(this)">宿舍神器</div>
+                    <div class="tag-item" onclick="toggleTag(this)">周末聚餐</div>
+                    <div class="tag-item" onclick="toggleTag(this)">深夜食堂</div>
+                    <div class="tag-item" onclick="toggleTag(this)">一人食</div>
+                    <div class="tag-item" onclick="toggleTag(this)">轻食</div>
+                    <div class="tag-item" onclick="toggleTag(this)">拌饭神器</div>
+                    <div class="tag-item" onclick="toggleTag(this)">快手菜</div>
+                </div>
+            </div>
+
+            <!-- 风格设置 -->
+            <div class="panel-section" id="styleSection">
+                <div class="section-title">
+                    <span class="icon">🎨</span>
+                    <span>风格设置</span>
+                </div>
+                <div class="input-group">
+                    <label class="input-label">卡片模板</label>
+                    <div class="template-grid">
+                        <div class="template-item selected" data-template="default" onclick="selectTemplate(this)">
+                            <div class="template-icon">📱</div>
+                            <div class="template-name">种草风</div>
+                        </div>
+                        <div class="template-item" data-template="game" onclick="selectTemplate(this)">
+                            <div class="template-icon">🎮</div>
+                            <div class="template-name">游戏风</div>
+                        </div>
+                        <div class="template-item" data-template="minimal" onclick="selectTemplate(this)">
+                            <div class="template-icon">✨</div>
+                            <div class="template-name">简约风</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="input-group">
+                    <label class="input-label">主题颜色</label>
+                    <div class="color-grid">
+                        <div class="color-item selected" style="background: #E53935;" data-color="#E53935" onclick="selectColor(this)"></div>
+                        <div class="color-item" style="background: #FF8F00;" data-color="#FF8F00" onclick="selectColor(this)"></div>
+                        <div class="color-item" style="background: #43A047;" data-color="#43A047" onclick="selectColor(this)"></div>
+                        <div class="color-item" style="background: #1E88E5;" data-color="#1E88E5" onclick="selectColor(this)"></div>
+                        <div class="color-item" style="background: #6D4C41;" data-color="#6D4C41" onclick="selectColor(this)"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 右侧预览区 -->
+        <div class="preview-panel">
+            <div class="preview-container">
+                <div class="card-preview" id="cardPreview">
+                    <!-- 图片区域 -->
+                    <div class="card-image-container" id="cardImageContainer">
+                        <div class="card-image-placeholder">
+                            <div class="icon">🍽️</div>
+                            <div>上传美食图片</div>
+                        </div>
+                    </div>
+                    
+                    <!-- 内容区域 -->
+                    <div class="card-content">
+                        <div class="card-header">
+                            <div class="card-main-title" id="cardMainTitle">
+                                <span>✨</span>
+                                <span>我的灵魂酱料搭配</span>
+                            </div>
+                            <div class="card-dish-name" id="cardDishName">麻辣鲜香拌饭</div>
+                            <div class="card-description" id="cardDescription">一勺辣鲜露，拯救寡淡人生 ✨</div>
+                        </div>
+
+                        <!-- 数值展示 -->
+                        <div class="stats-container" id="statsContainer">
+                            <div class="stat-card">
+                                <div class="stat-value" id="cardStat1">+7</div>
+                                <div class="stat-label">🍚 下饭值</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-value" id="cardStat2">+5</div>
+                                <div class="stat-label">🌶️ 鲜辣值</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-value" id="cardStat3">+6</div>
+                                <div class="stat-label">😋 快乐值</div>
+                            </div>
+                        </div>
+
+                        <!-- 标签展示 -->
+                        <div class="card-tags" id="cardTags">
+                            <span class="card-tag">#打工人午餐</span>
+                            <span class="card-tag">#轻食</span>
+                        </div>
+
+                        <!-- 酱料展示 -->
+                        <div class="sauce-display" id="sauceDisplay">
+                            <div class="sauce-display-icon">🌶️</div>
+                            <div class="sauce-display-info">
+                                <div class="sauce-display-name" id="displaySauceName">家乐辣鲜露</div>
+                                <div class="sauce-display-label">我的灵魂酱料</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 底部水印 -->
+                    <div class="card-footer">
+                        <span>灵魂酱料标签工坊</span>
+                        <span>×</span>
+                        <span>Unilever</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 画布控制 -->
+            <div class="canvas-controls">
+                <div class="control-group">
+                    <span class="control-label">缩放:</span>
+                    <input type="range" id="zoomSlider" min="50" max="150" value="100" style="width: 120px;" oninput="updateZoom()">
+                    <span id="zoomValue">100%</span>
+                </div>
+                <button class="control-btn" onclick="resetPreview()">🔄 重置</button>
+                <button class="control-btn" onclick="centerPreview()">📍 居中</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 底部下载栏 -->
+    <div class="download-bar">
+        <div class="download-content">
+            <div class="size-options">
+                <div class="size-option selected" data-size="3:4" onclick="selectSize(this)">3:4 小红书</div>
+                <div class="size-option" data-size="9:16" onclick="selectSize(this)">9:16 抖音</div>
+                <div class="size-option" data-size="1:1" onclick="selectSize(this)">1:1 方图</div>
+                <div class="size-option" data-size="16:9" onclick="selectSize(this)">16:9 横图</div>
+            </div>
+            <div class="download-buttons">
+                <button class="btn-download primary" onclick="downloadImage('png')">
+                    <span>📥</span>
+                    <span>下载 PNG</span>
+                </button>
+                <button class="btn-download secondary" onclick="downloadImage('jpg')">
+                    <span>📥</span>
+                    <span>下载 JPG</span>
+                </button>
+                <button class="btn-download secondary" onclick="shareLink()">
+                    <span>🔗</span>
+                    <span>分享链接</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 品牌区域 -->
+    <div class="brand-footer">
+        <div class="brand-logos">
+            <span class="brand-logo">🏢 Unilever</span>
+            <span class="brand-logo">🍶 家乐</span>
+            <span class="brand-logo">🥗 好乐门</span>
+        </div>
+        <div class="brand-copyright">灵魂酱料标签工坊 © 2024 | 让每一餐都有灵魂</div>
+    </div>
+
+    <script>
+        // 全局状态
+        let currentThemeColor = '#E53935';
+        let currentTemplate = 'default';
+        let selectedTags = [];
+        let selectedSauce = '家乐辣鲜露';
+        let sauceIcon = '🌶️';
+        let uploadedImage = null;
+
+        // 图片上传处理
+        function handleImageUpload(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    uploadedImage = e.target.result;
+                    
+                    // 更新上传区域显示
+                    const uploadArea = document.getElementById('uploadArea');
+                    uploadArea.classList.add('has-image');
+                    uploadArea.innerHTML = `<img src="${uploadedImage}" alt="上传的图片">`;
+                    
+                    // 更新卡片预览
+                    const cardImageContainer = document.getElementById('cardImageContainer');
+                    cardImageContainer.innerHTML = `<img src="${uploadedImage}" alt="食物图片">`;
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        // 拖拽上传
+        const uploadArea = document.getElementById('uploadArea');
+        uploadArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadArea.style.borderColor = '#0052CC';
+            uploadArea.style.background = '#F0F7FF';
+        });
+
+        uploadArea.addEventListener('dragleave', (e) => {
+            e.preventDefault();
+            uploadArea.style.borderColor = '#E5E7EB';
+            uploadArea.style.background = '#FAFBFC';
+        });
+
+        uploadArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadArea.style.borderColor = '#E5E7EB';
+            uploadArea.style.background = '#FAFBFC';
+            
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                document.getElementById('imageInput').files = files;
+                handleImageUpload({ target: { files: files } });
+            }
+        });
+
+        // 更新预览
+        function updatePreview() {
+            const mainTitle = document.getElementById('mainTitle').value || '我的灵魂酱料搭配';
+            const dishName = document.getElementById('dishName').value || '麻辣鲜香拌饭';
+            const description = document.getElementById('description').value || '一勺辣鲜露，拯救寡淡人生 ✨';
+
+            document.getElementById('cardMainTitle').innerHTML = `<span>✨</span><span>${mainTitle}</span>`;
+            document.getElementById('cardDishName').textContent = dishName;
+            document.getElementById('cardDescription').textContent = description;
+        }
+
+        // 更新滑块
+        function updateSlider(sliderId) {
+            const value = document.getElementById(sliderId).value;
+            document.getElementById(sliderId + 'Value').textContent = value;
+            
+            // 更新卡片数值
+            const cardStatId = 'cardStat' + sliderId.charAt(sliderId.length - 1);
+            document.getElementById(cardStatId).textContent = '+' + value;
+        }
+
+        // 选择酱料
+        function selectSauce(element) {
+            // 移除其他选中状态
+            document.querySelectorAll('.sauce-item').forEach(item => {
+                item.classList.remove('selected');
+            });
+            
+            // 添加选中状态
+            element.classList.add('selected');
+            
+            // 更新数据
+            selectedSauce = element.querySelector('.sauce-name').textContent;
+            sauceIcon = element.querySelector('.sauce-icon').textContent;
+            const newColor = element.dataset.color;
+            
+            // 更新主题色
+            selectColorByValue(newColor);
+            
+            // 更新卡片显示
+            document.getElementById('displaySauceName').textContent = selectedSauce;
+            document.querySelector('.sauce-display-icon').textContent = sauceIcon;
+        }
+
+        // 切换标签
+        function toggleTag(element) {
+            const tagText = element.textContent;
+            
+            if (element.classList.contains('selected')) {
+                element.classList.remove('selected');
+                selectedTags = selectedTags.filter(t => t !== tagText);
+            } else {
+                if (selectedTags.length >= 4) {
+                    alert('最多选择4个标签');
+                    return;
+                }
+                element.classList.add('selected');
+                selectedTags.push(tagText);
+            }
+            
+            // 更新卡片标签显示
+            const cardTags = document.getElementById('cardTags');
+            if (selectedTags.length > 0) {
+                cardTags.innerHTML = selectedTags.map(tag => `<span class="card-tag">#${tag}</span>`).join('');
+            } else {
+                cardTags.innerHTML = '<span class="card-tag">#添加标签</span>';
+            }
+        }
+
+        // 选择模板
+        function selectTemplate(element) {
+            document.querySelectorAll('.template-item').forEach(item => {
+                item.classList.remove('selected');
+            });
+            element.classList.add('selected');
+            
+            currentTemplate = element.dataset.template;
+            const cardPreview = document.getElementById('cardPreview');
+            
+            // 移除所有模板类
+            cardPreview.classList.remove('game-style', 'minimal-style');
+            
+            // 添加新模板类
+            if (currentTemplate === 'game') {
+                cardPreview.classList.add('game-style');
+            } else if (currentTemplate === 'minimal') {
+                cardPreview.classList.add('minimal-style');
+            }
+        }
+
+        // 选择颜色
+        function selectColor(element) {
+            document.querySelectorAll('.color-item').forEach(item => {
+                item.classList.remove('selected');
+            });
+            element.classList.add('selected');
+            
+            currentThemeColor = element.dataset.color;
+            applyThemeColor();
+        }
+
+        // 通过颜色值选择颜色
+        function selectColorByValue(color) {
+            document.querySelectorAll('.color-item').forEach(item => {
+                if (item.dataset.color === color) {
+                    item.classList.add('selected');
+                } else {
+                    item.classList.remove('selected');
+                }
+            });
+            currentThemeColor = color;
+            applyThemeColor();
+        }
+
+        // 应用主题色
+        function applyThemeColor() {
+            document.documentElement.style.setProperty('--theme-red', currentThemeColor);
+            
+            // 更新滑块颜色
+            document.querySelectorAll('input[type="range"]').forEach(slider => {
+                slider.style.setProperty('--theme-color', currentThemeColor);
+            });
+            
+            // 更新数值显示颜色
+            document.querySelectorAll('.slider-value, .stat-value').forEach(el => {
+                el.style.color = currentThemeColor;
+            });
+            
+            // 更新统计卡片背景
+            const statCards = document.querySelectorAll('.stat-card');
+            statCards.forEach(card => {
+                card.style.background = currentThemeColor + '15';
+            });
+            
+            // 更新标签颜色
+            document.querySelectorAll('.card-tag').forEach(tag => {
+                tag.style.color = currentThemeColor;
+            });
+        }
+
+        // 选择尺寸
+        function selectSize(element) {
+            document.querySelectorAll('.size-option').forEach(item => {
+                item.classList.remove('selected');
+            });
+            element.classList.add('selected');
+        }
+
+        // 缩放控制
+        function updateZoom() {
+            const zoom = document.getElementById('zoomSlider').value;
+            document.getElementById('zoomValue').textContent = zoom + '%';
+            document.getElementById('cardPreview').style.transform = `scale(${zoom / 100})`;
+        }
+
+        // 重置预览
+        function resetPreview() {
+            document.getElementById('zoomSlider').value = 100;
+            updateZoom();
+        }
+
+        // 居中预览
+        function centerPreview() {
+            resetPreview();
+        }
+
+        // 下载图片
+        function downloadImage(format) {
+            const cardPreview = document.getElementById('cardPreview');
+            
+            // 使用 html2canvas（需要引入库）或者模拟下载
+            alert(`即将下载 ${format.toUpperCase()} 格式的图片\n\n提示：实际项目中需要引入 html2canvas 库来实现图片导出功能`);
+            
+            // 实际实现时使用以下代码：
+            // html2canvas(cardPreview).then(canvas => {
+            //     const link = document.createElement('a');
+            //     link.download = `灵魂酱料卡片.${format}`;
+            //     link.href = canvas.toDataURL(`image/${format}`);
+            //     link.click();
+            // });
+        }
+
+        // 分享链接
+        function shareLink() {
+            alert('分享链接功能开发中...\n\n将生成一个可分享的链接，让朋友也能看到你的酱料卡片！');
+        }
+
+        // 显示教程
+        function showTutorial() {
+            alert('使用教程：\n\n1. 📷 上传你的美食照片\n2. ✏️ 填写菜品名称和描述\n3. 🍶 选择你用的酱料\n4. 📊 调整风味数值\n5. 🏷️ 添加场景标签\n6. 🎨 选择喜欢的风格和颜色\n7. 📥 下载分享到社交媒体！');
+        }
+
+        // 滚动到模板区域
+        function scrollToTemplates() {
+            document.getElementById('styleSection').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // 关于我们
+        function showAbout() {
+            alert('灵魂酱料标签工坊\n\n由联合利华旗下品牌提供支持\n让每一餐都有灵魂！\n\n© 2024 Soul Sauce Label Studio');
+        }
+
+        // 初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            // 设置默认选中状态
+            document.querySelector('.sauce-item').classList.add('selected');
+            
+            // 设置默认标签
+            const firstTag = document.querySelector('.tag-item');
+            firstTag.classList.add('selected');
+            selectedTags.push(firstTag.textContent);
+            
+            // 应用初始主题色
+            applyThemeColor();
+        });
+    </script>
+</body>
+</html>
